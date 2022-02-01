@@ -117,23 +117,21 @@ def run_algo():
 
     # Best first word is always 'TRACE' - you can validate it with get_best_guess() on the entire answer list
     guess = 'trace'
-    result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
-    excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
-    answers = filter_answers(answers, excluded, included, fixed)
 
     while 1:
+        result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
+        excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
+        answers = filter_answers(answers, excluded, included, fixed)
+
         if len(answers) == 1:
             print(f'Final answer: {answers[0]}')
             break
 
+        # Get next guess
         guess = get_best_guess(answers)
         if isinstance(guess, list):
             print(f'Guess any of the following: {guess}')
             guess = input('What word did you use? ')
-
-        result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
-        excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
-        answers = filter_answers(answers, excluded, included, fixed)
 
 
 if __name__ == '__main__':
