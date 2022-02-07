@@ -1,5 +1,4 @@
 import json
-import re
 
 
 def process_result(guess, result, excluded, included, fixed):
@@ -25,9 +24,10 @@ def process_result(guess, result, excluded, included, fixed):
     return excluded, included, fixed
 
 
-def has_chars(word, char_list):
-    exp = re.compile("|".join(char_list))
-    return re.search(exp, word) is not None
+def has_chars(word, char_list, allowed_count):
+    return any([
+        word.count(c) > allowed_count[c] for c in char_list
+    ])
 
 
 def has_all_chars(word, char_list):
@@ -44,8 +44,17 @@ def fixed_match(word, fixed_chars):
 
 
 def filter_answers(answers, excluded, included, fixed):
-    # Filter answers by excluded characters
-    answers = [a for a in answers if not has_chars(a, excluded)]
+    # Filter answers by excluded characters. Excludes can include a letter that is a repeat and is fixed.
+    included_chars_count = {}
+    for c in excluded:
+        count = 0
+        if c in included:
+            count += 1
+        if c in [f[1] for f in fixed]:
+            count += 1
+        included_chars_count[c] = count
+
+    answers = [a for a in answers if not has_chars(a, excluded, included_chars_count)]
     print(len(answers), answers)
 
     # Filter answers by fixed position characters
@@ -102,7 +111,10 @@ def get_best_guess(answers):
     max_score_answers = [a for a in answers if score[guesses.index(a)] == max_score]
 
     if max_score_answers:
-        return max_score_answers
+        if len(max_score_answers) > 1:
+            return max_score_answers
+        else:
+            return max_score_answers[0]
     else:
         return guesses[score.index(max(score))]
 
