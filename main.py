@@ -96,6 +96,10 @@ def get_best_guess(answers):
     with open('guess_words.json', 'r') as f:
         guesses = json.load(f)
 
+    # Add the answer list as a possible guess since NYT removed them from guess word list
+    with open('answers.json', 'r') as f:
+        guesses += json.load(f)
+
     score = [-1] * len(guesses)
     for i, guess in enumerate(guesses):
         possible_constellations = set()
