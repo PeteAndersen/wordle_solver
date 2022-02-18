@@ -150,6 +150,26 @@ def run_algo():
             guess = input('What word did you use? ')
 
 
+def run_manual_mode():
+    # Lets you run with your own answers to see how well your guesses narrow down the answer list each step
+    with open('answers.json', 'r') as f:
+        answers = json.load(f)
+
+    excluded = set()
+    included = set()
+    fixed = set()
+
+    while 1:
+        guess = input('What word did you use? ')
+        result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
+        excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
+        answers = filter_answers(answers, excluded, included, fixed)
+
+        if len(answers) == 1:
+            print(f'Final answer: {answers[0]}')
+            break
+
+
 if __name__ == '__main__':
     run_algo()
 
