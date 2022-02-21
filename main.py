@@ -3,7 +3,7 @@ import json
 
 def process_result(guess, result, excluded, included, fixed):
     for i, (letter, result) in enumerate(zip(guess, result)):
-        if result == '_':
+        if result == '-':
             excluded.add(letter)
         elif result == 'y':
             # Only add if not in fixed set
@@ -15,7 +15,7 @@ def process_result(guess, result, excluded, included, fixed):
             if letter in included:
                 included.remove(letter)
         else:
-            raise ValueError(f'dafuq is {result}? I said [_yg] only!')
+            raise ValueError(f'dafuq is {result}? I said [-yg] only!')
 
     print(f'Excluded: {", ".join(sorted(excluded))}')
     print(f'Included: {", ".join(sorted(included))}')
@@ -73,21 +73,21 @@ def get_result(guess, answer):
     answer = list(answer.lower())
 
     # Default to grey
-    result = ['_'] * len(guess)
+    result = ['-'] * len(guess)
 
     # Check for greens first and reserve that index so it can't be yellow
     for x in range(len(guess)):
         if guess[x] == answer[x]:
             result[x] = 'g'
-            guess[x] = '_'
-            answer[x] = '_'
+            guess[x] = '-'
+            answer[x] = '-'
 
     # Check for yellows
     for x in range(len(guess)):
-        if guess[x] != '_':
+        if guess[x] != '-':
             if guess[x] in answer:
                 result[x] = 'y'
-                answer[answer.index(guess[x])] = '_'
+                answer[answer.index(guess[x])] = '-'
 
     return ''.join(result)
 
@@ -135,7 +135,7 @@ def run_algo():
     guess = 'trace'
 
     while 1:
-        result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
+        result = input(f'Enter result for `{guess.upper()}` [-yg]: ').lower()
         excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
         answers = filter_answers(answers, excluded, included, fixed)
 
@@ -161,7 +161,7 @@ def run_manual_mode():
 
     while 1:
         guess = input('What word did you use? ')
-        result = input(f'Enter result for `{guess.upper()}` [_yg]: ').lower()
+        result = input(f'Enter result for `{guess.upper()}` [-yg]: ').lower()
         excluded, included, fixed = process_result(guess, result, excluded, included, fixed)
         answers = filter_answers(answers, excluded, included, fixed)
 
